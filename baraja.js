@@ -21,6 +21,7 @@ class Carta
 		this.valor = valor;
 		this.indicePalo = losPalos.indexOf(this.palo)
 		this.indiceValor= losValores.indexOf(this.valor);
+		this.puntos = this.valor.valor;
 		//console.log(`Creando carta ${this.palo} y ${this.valor}`)
 		//console.log(`Indices ${this.indicePalo} y ${this.indiceValor}`);
 	};
@@ -31,6 +32,37 @@ class Carta
 
 	getIndiceValor(){
 		return this.indiceValor;
+	}
+
+	static esMayor(carta1,carta2,palo){
+		
+		if (carta1.palo == carta2.palo){
+		
+			if (carta1.puntos > carta2.puntos){
+				return true;
+			}
+			else if(carta1.puntos<carta2.puntos){
+				return false;
+			}
+			else{
+				// Son iguales
+				if (carta1.getIndiceValor() > carta2.getIndiceValor() ){
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+		else{
+			if (carta1.getIndicePalo()<carta2.getIndicePalo()){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

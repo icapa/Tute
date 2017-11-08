@@ -4,31 +4,19 @@ let numeroJugadores=4;
 let numeroCartasJugador=10;
 
 let laBaraja = new Baraja();
-var laPartida = new Partida(numeroJugadores,numeroCartasJugador,laBaraja.todas());
+var laPartida = new Partida(numeroJugadores,numeroCartasJugador,laBaraja);
 
 
 $(document).ready(function(){
-	/*
-	$("#jugador1").click(function(event){
-		alert("Pulso el jugador1");
-	})
-	*/
-	
-
-	
 	CrearDiv('#jugador1');
 	CrearDiv('#jugador2');
 	CrearDiv('#jugador3');
 	CrearDiv('#jugador4');
-	
 
-	
+	AsignaEventosCartas('#jugador1');
 })
 
-/*
-Función que crea los contenedores
-para las cartas de un jugador
-*/
+
 
 
 
@@ -116,4 +104,23 @@ function IndiceCartaImagen(carta){
 
 }
 
+function AsignaEventosCartas(eldiv){
+	var i;
+	for (i=0;i<10;i++){
+		$(eldiv+i).hover(
+			function(objeto){
+				$(objeto.target).css({'z-index':200});
+			},function(objeto){
+				var indexTarget = objeto.currentTarget.id.substr(-1,1);
+				var z = 100 + parseInt(indexTarget);
+				$(objeto.target).css({'z-index': z});
+			}
+		);
+		$(eldiv+i).click(
+			function(objeto){
+				console.log('Pulse:'+objeto.target.id);
+			}
+		);
+	}
 
+}

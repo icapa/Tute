@@ -1,5 +1,6 @@
 class Partida{
-	constructor(numJugadores,numCartas,cartas){
+	constructor(numJugadores,numCartas,baraja){
+		this.baraja=baraja;
 		this.numJugadores=numJugadores;
 		this.indiceMano = 0;
 		this.numCartas = numCartas;
@@ -11,7 +12,7 @@ class Partida{
 			console.log('Creando jugador: ' + i);
 			this.jugadores[i] = new Array(this.numCartas);
 		}
-		this.todasLasCartas=cartas;
+		this.todasLasCartas=baraja.todas();
 		this.laMano = this.barajea();
 		this.reparte();		
 	}
@@ -43,6 +44,12 @@ class Partida{
 				this.jugadores[j][i]=(this.laMano[i+(j*this.numCartas)])
 			}
 		}
+		// Ordenamos
+		
+		for (var j=0;j<this.numJugadores;j++){
+			this.jugadores[j]=this.ordenaMano(this.jugadores[j]);
+		}
+		
 	}
 
 	dameCarta(jugador,indiceCarta){
@@ -50,5 +57,30 @@ class Partida{
 			return this.jugadores[jugador][indiceCarta];
 		}
 		return null;
+	}
+
+	ordenaMano(mano){
+		var arrayOrdenado=[];
+
+		for (var i=0;i<mano.length;i++){
+			if (i==0){
+				arrayOrdenado.push(mano[0]);
+			}else{
+				var j;
+				for (j=0;j<arrayOrdenado.length;j++){
+					if (Carta.esMayor( this.baraja.carta(mano[i]),
+						this.baraja.carta(arrayOrdenado[j]) )==true){
+						arrayOrdenado.splice(j,0,mano[i]);
+						break;
+					}
+
+				}
+				if (j==arrayOrdenado.length){
+					arrayOrdenado.splice(j+1,0,mano[i]);
+				}
+			}
+		}
+		return arrayOrdenado;
+	
 	}
 }
