@@ -13,7 +13,7 @@ $(document).ready(function(){
 	CrearDiv('#jugador3');
 	CrearDiv('#jugador4');
 
-	AsignaEventosCartas('#jugador1');
+	AsignaEventosCartas('#jugador4');
 })
 
 
@@ -71,9 +71,12 @@ function CrearDiv(jugador){
 
 		var jugNum = parseInt(jugador.substr(-1,1));
 		var carNum = laPartida.dameCarta(jugNum-1,i);
-
-		AsignaCartaImagen(jugNum,i,laBaraja.carta(carNum));
-		
+		if (jugNum==4){
+			AsignaCartaImagen(jugNum,i,laBaraja.carta(carNum));
+		}
+		else{
+			AsignaCartaImagen(jugNum,i,undefined);
+		}
 	}
 	
 }

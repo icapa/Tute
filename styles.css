@@ -8,7 +8,7 @@
 	display: block;
 	width: 208px;
 	height: 315px;
-	background: url('baraja_completa.png') -208px 0;
+	background: url('baraja_completa.png') 0px 320px;
 	zoom: 0.5;
 }
 
@@ -16,10 +16,11 @@
 	display: block;
 	position: absolute;
 	left: 0px;
-	top:160px;
+	top:200px;
 	/*background-color: #ff0000;*/
 	width: 104px;
 	height: 560px;
+
 }
 #jugador2{
 	display: block;
@@ -34,7 +35,7 @@
 	display: block;
 	position: absolute;
 	left: 800px;
-	top:160px;
+	top:200px;
 	/*background-color: #00ff00;*/
 	width: 104px;
 	height: 500px;
@@ -47,4 +48,38 @@
 	/*background-color: #ff00ff;*/
 	width: 500px;
 	height: 160px;
+}
+
+#carta1{
+	display: block;
+	position: absolute;
+	left: 300px;
+	top:750px;
+	width: 208px;
+	height: 320px;	
+}
+#carta2{
+	display: block;
+	position: absolute;
+	left: 800px;
+	top:400px;
+	width: 208px;
+	height: 320px;
+}
+#carta3{
+	display: block;
+	position: absolute;
+	left: 1300px;
+	top: 750px;
+	width: 208px;
+	height: 320px;
+}
+#carta4{
+	display: block;
+	position: absolute;
+	left: 800px;
+	top: 1100px;
+	width: 208px;
+	height: 320px;
+
 }
