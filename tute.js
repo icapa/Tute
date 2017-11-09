@@ -7,7 +7,8 @@ class Partida{
 		this.jugadores= new Array(numJugadores);
 		this.laMano = new Array();
 		this.cartasTiradas= new Array();
-		console.log("Creando partida jug:"+this.numJugadores+' cartas:'+this.numCartas)
+		
+
 		for(var i = 0 ; i <this.numJugadores;i++){
 			console.log('Creando jugador: ' + i);
 			this.jugadores[i] = new Array(this.numCartas);

@@ -71,6 +71,7 @@ function CrearDiv(jugador){
 
 		var jugNum = parseInt(jugador.substr(-1,1));
 		var carNum = laPartida.dameCarta(jugNum-1,i);
+		
 		if (jugNum==4){
 			AsignaCartaImagen(jugNum,i,laBaraja.carta(carNum));
 		}
@@ -125,5 +126,6 @@ function AsignaEventosCartas(eldiv){
 			}
 		);
 	}
-
 }
+
+
