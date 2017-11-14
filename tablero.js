@@ -14,6 +14,12 @@ $(document).ready(function(){
 	CrearDiv('#jugador4');
 
 	AsignaEventosCartas('#jugador4');
+
+	laPartida.siguienteTurno(function(usuario){
+		console.log('El callback de tablero recibe: ' + usuario[0] + ' y ' + usuario[1]);
+		TiraLaCarta(usuario[0]+1,usuario[1]);
+	});
+
 })
 
 
@@ -82,6 +88,18 @@ function CrearDiv(jugador){
 	
 }
 
+function TiraCartaImagen(jugador,carta){
+	var i = IndiceCartaImagen(carta);
+	$('#carta'+jugador)
+		.css({'background':"url('baraja_completa.png') "+i[0]+"px "+i[1]+"px"});
+	/* Hay que ocultar el div de la carta tirada */
+}
+
+function OcultaCartaTirada(jugador,indiceCarta){
+	$('#jugador'+jugador+indiceCarta)
+		.css({'display':'none'});
+}
+
 function AsignaCartaImagen(jugador,numero,carta){
 	
 	var i = IndiceCartaImagen(carta);
@@ -122,10 +140,27 @@ function AsignaEventosCartas(eldiv){
 		);
 		$(eldiv+i).click(
 			function(objeto){
-				console.log('Pulse:'+objeto.target.id);
+				var usuario = parseInt(objeto.target.id.substr(-2,1));
+				var carta = parseInt(objeto.target.id.substr(-1,1));
+				TiraLaCarta(usuario,carta);
+				laPartida.siguienteTurno(function(usuario,carta){
+					TiraLaCarta(usuario[0]+1,usuario[1]);
+					});
+
 			}
 		);
 	}
 }
 
-
+function TiraLaCarta(usuario,numeroCarta){
+	var cartaReal = laPartida.dameCarta(usuario-1,numeroCarta)
+	TiraCartaImagen(usuario,laBaraja.carta(cartaReal));
+	OcultaCartaTirada(usuario,numeroCarta);
+	if (usuario==4){	// El suario de verdad	
+		laPartida.juegaElUsuario(cartaReal);
+		
+	}
+	/*
+	
+	*/
+}

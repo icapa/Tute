@@ -8,15 +8,60 @@ class Partida{
 		this.laMano = new Array();
 		this.cartasTiradas= new Array();
 		
-
 		for(var i = 0 ; i <this.numJugadores;i++){
 			console.log('Creando jugador: ' + i);
 			this.jugadores[i] = new Array(this.numCartas);
 		}
+
+		this.turnosCartas = new Array();
+		this.turnoActual = Math.floor(Math.random()*numJugadores);
+
+
+
 		this.todasLasCartas=baraja.todas();
 		this.laMano = this.barajea();
-		this.reparte();		
+		this.reparte();
+
+		/* Debug */
+				
 	}
+
+
+
+	compruebaMano(){
+		if(this.turnosCartas.length==this.numJugadores){
+			console.log("Mano completa!, a ver quién la gana");
+		}
+	}
+
+
+	juegaElUsuario(carta){
+		console.log("El usuario tiro la carta: " + carta);
+		this.turnosCartas.push(carta);
+		this.compruebaMano();
+	}
+
+	juegaLaMaquina(turno){
+		var cartaElegida=3;	// Solo para probar la logica
+		console.log("juegaLaMaquina: el usuario: " + turno );
+		this.turnosCartas.push(cartaElegida);
+		this.compruebaMano();
+		return [turno,cartaElegida];
+	}
+
+	siguienteTurno(callback){
+		this.turnoActual = (this.turnoActual+1)%this.numJugadores;
+		
+		while(this.turnoActual!= this.numJugadores-1){
+			
+			console.log("Juega la máquina el usuario: " + this.turnoActual);
+			callback(this.juegaLaMaquina(this.turnoActual));
+			this.turnoActual = (this.turnoActual+1)%this.numJugadores;
+		}
+	}
+
+
+
 
 	barajea(){
 		var enOrden = new Array();	// Ordenado
