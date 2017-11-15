@@ -14,9 +14,9 @@ class Partida{
 		}
 
 		this.turnosCartas = new Array();
-		this.turnoActual = Math.floor(Math.random()*numJugadores);
-
-
+		//this.turnoActual = Math.floor(Math.random()*numJugadores);
+		this.turnoActual = 3
+		this.numeroMano=0;
 
 		this.todasLasCartas=baraja.todas();
 		this.laMano = this.barajea();
@@ -30,7 +30,13 @@ class Partida{
 
 	compruebaMano(){
 		if(this.turnosCartas.length==this.numJugadores){
-			console.log("Mano completa!, a ver quién la gana");
+			console.log("Mano completa!, a ver quién la gana: Mano:" + this.numeroMano);
+			this.numeroMano++;
+			console.log("\tHay que comprobar: " + this.turnosCartas);
+			this.turnosCartas = [];
+			if (this.numeroMano==this.numCartas){
+				console.log("BIEN ACABO LA PARTIDA !!!!");
+			}
 		}
 	}
 
@@ -43,13 +49,13 @@ class Partida{
 
 	juegaLaMaquina(turno){
 		var cartaElegida=3;	// Solo para probar la logica
-		console.log("juegaLaMaquina: el usuario: " + turno );
 		this.turnosCartas.push(cartaElegida);
 		this.compruebaMano();
 		return [turno,cartaElegida];
 	}
 
 	siguienteTurno(callback){
+
 		this.turnoActual = (this.turnoActual+1)%this.numJugadores;
 		
 		while(this.turnoActual!= this.numJugadores-1){
