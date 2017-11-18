@@ -15,7 +15,7 @@ class Partida{
 
 		this.turnosCartas = new Array();
 		//this.turnoActual = Math.floor(Math.random()*numJugadores);
-		this.turnoActual = 3
+		this.turnoActual = 2;
 		this.numeroMano=0;
 
 		this.todasLasCartas=baraja.todas();
@@ -31,8 +31,25 @@ class Partida{
 	compruebaMano(){
 		if(this.turnosCartas.length==this.numJugadores){
 			console.log("Mano completa!, a ver quién la gana: Mano:" + this.numeroMano);
+			let ordenados = [...this.turnosCartas];
+			ordenados.sort( (laCarta1, laCarta2) =>{
+				if (Carta.esMayor(laBaraja.carta(laCarta1),laBaraja.carta(laCarta2))) {
+					return -1;
+				}else{
+					return 1;
+				}
+			});
+
+			console.log("El array de ordenados es: " + ordenados);
+
+
+			const turnoGanador = this.turnosCartas.indexOf(ordenados[0]);
+
+			console.log("GANO LA MANO EL JUGADOR: " + turnoGanador);	
+
+
 			this.numeroMano++;
-			console.log("\tHay que comprobar: " + this.turnosCartas);
+			
 			this.turnosCartas = [];
 			if (this.numeroMano==this.numCartas){
 				console.log("BIEN ACABO LA PARTIDA !!!!");
@@ -48,20 +65,52 @@ class Partida{
 	}
 
 	juegaLaMaquina(turno){
-		var cartaElegida=3;	// Solo para probar la logica
+	
+		let cartaElegida;
+
+		if (this.turnosCartas.length!=0){
+			const paloPrimera= this.baraja.carta(this.turnosCartas[0]).getIndicePalo();
+			const disponibles = this.filtraPorPalo(this.jugadores[turno],paloPrimera);
+			console.log("Del palo de la primera hay: " + disponibles);
+			const disponiblesMayores = this.filtraSuperaCarta(disponibles,this.turnosCartas);
+			console.log("Cartas que lo superan son las siguientes:" + disponiblesMayores);
+			if (disponibles.length){
+				if (disponiblesMayores.length){
+					console.log("Tenemos opciones para tirar TODO");
+					cartaElegida = disponiblesMayores[0];	// TODO: Tiramos la primera no miramos mas, esto es muy cutre
+				}else{
+					console.log("No hay supeior, hay que tirar de pinte, tiramos cualquiera TODO");
+					cartaElegida =disponibles[0];	
+				}
+			}
+			else{
+				cartaElegida = this.jugadores[turno][0];
+			}
+
+		}
+
+		/* Deshabilitar la carta */
+		/*
+		const indiceABorrar = this.jugadores[turno].indexOf(cartaElegida);
+		this.jugadores[turno][indiceABorrar] = null;	//Desaparece la carta
+		*/
+
 		this.turnosCartas.push(cartaElegida);
 		this.compruebaMano();
-		return [turno,cartaElegida];
+		return [turno,this.jugadores[turno].indexOf(cartaElegida)];
 	}
 
 	siguienteTurno(callback){
-
+		let laTirada;
 		this.turnoActual = (this.turnoActual+1)%this.numJugadores;
 		
 		while(this.turnoActual!= this.numJugadores-1){
 			
 			console.log("Juega la máquina el usuario: " + this.turnoActual);
-			callback(this.juegaLaMaquina(this.turnoActual));
+			laTirada = this.juegaLaMaquina(this.turnoActual);
+			callback(laTirada);
+			/* Aqui anulamos la carta para que no se pueda usar */
+			this.jugadores[laTirada[0]][laTirada[1]] = null;
 			this.turnoActual = (this.turnoActual+1)%this.numJugadores;
 		}
 	}
@@ -135,4 +184,36 @@ class Partida{
 		return arrayOrdenado;
 	
 	}
+
+	/* La logiga del juego
+	- Filtrar por palo
+	- Sacar la mayor
+	etc....
+	*/
+	
+
+	filtraPorPalo(arrayCartas,elPalo){
+		return arrayCartas.filter(laCarta => {
+			if (laCarta==null){
+				return false;
+			}else
+			{
+				return this.baraja.carta(laCarta).getIndicePalo()==elPalo;
+			}
+		});
+	}
+
+	filtraSuperaCarta(cartasUsuario,cartasTiradas){
+		return cartasUsuario.filter(laCarta =>{
+			const cartaActual = this.baraja.carta(laCarta);
+			for (let i=0;i<cartasTiradas.length;i++){
+				const cartaTirada = this.baraja.carta(cartasTiradas[i]);
+				if (Carta.esMayor(cartaActual,cartaTirada,cartaActual.getIndicePalo())){
+					return 1;
+				}
+			}
+		});
+	}
+
+
 }
