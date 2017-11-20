@@ -19,8 +19,24 @@ class Partida{
 		this.numeroMano=0;
 
 		this.todasLasCartas=baraja.todas();
+
+		/* Esto es lo que habría que hacer en cada mano */
 		this.laMano = this.barajea();
+
+
+		this.cartaPinte = this.laMano[ (((this.turnoActual + this.numJugadores) % numJugadores)*10)+(numCartas-1)];
+
+
 		this.reparte();
+
+		this.cartaPinte = this.jugadores[(this.turnoActual + this.numJugadores)% numJugadores][numCartas-1];
+
+
+
+
+
+
+		console.log("Pinta la carta: " + this.cartaPinte + "que es: " + laBaraja.carta(this.cartaPinte).valor);
 
 		/* Debug */
 				
@@ -28,12 +44,13 @@ class Partida{
 
 
 
-	compruebaMano(){
+	compruebaMano(callbackAcabado){
+		const paloPinte = laBaraja.carta(this.cartaPinte).getIndicePalo();
 		if(this.turnosCartas.length==this.numJugadores){
 			console.log("Mano completa!, a ver quién la gana: Mano:" + this.numeroMano);
 			let ordenados = [...this.turnosCartas];
 			ordenados.sort( (laCarta1, laCarta2) =>{
-				if (Carta.esMayor(laBaraja.carta(laCarta1),laBaraja.carta(laCarta2))) {
+				if (Carta.esMayor(laBaraja.carta(laCarta1),laBaraja.carta(laCarta2),paloPinte)) {
 					return -1;
 				}else{
 					return 1;
@@ -53,6 +70,9 @@ class Partida{
 			this.turnosCartas = [];
 			if (this.numeroMano==this.numCartas){
 				console.log("BIEN ACABO LA PARTIDA !!!!");
+				if (callbackAcabado){
+					callbackAcabado()
+				}
 			}
 		}
 	}
@@ -67,7 +87,7 @@ class Partida{
 	juegaLaMaquina(turno){
 	
 		let cartaElegida;
-
+		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo(); 
 		if (this.turnosCartas.length!=0){
 			const paloPrimera= this.baraja.carta(this.turnosCartas[0]).getIndicePalo();
 			const disponibles = this.filtraPorPalo(this.jugadores[turno],paloPrimera);
@@ -84,16 +104,37 @@ class Partida{
 				}
 			}
 			else{
-				cartaElegida = this.jugadores[turno][0];
+				console.log("El usuario falla, buscando cartas por pinte");
+				const cartasPinte = this.filtraPorPalo(this.jugadores[turno],paloPinte);
+				console.log("Buscando cartas de pinte, las cartas que hay: " + cartasPinte);
+				console.log("Ahora hay que mirar si hay tirada alguna con pinte");
+				const tiradasPinte = this.filtraPorPalo(this.turnosCartas, paloPinte);
+				console.log("Hay tiradas con pinte las siguientes: " + tiradasPinte);
+				if (tiradasPinte.length){
+					console.log("Hay cartas tiradas con pinte, hay que superar si se puede");
+					const disponiblesMayoresPinte = this.filtraSuperaCarta(cartasPinte,tiradasPinte);
+					if (disponiblesMayoresPinte.length){
+						console.log("Algún usuario falló y hay que superar y podemos: " + disponiblesMayoresPinte);
+						cartaElegida = disponiblesMayoresPinte[0];	// DE MOMENTO TIRO LA PRIMERA QUE SE PUEDEA
+					}else{
+						/* No tenemos pinte, si la mano es nuestra tiramos puntos, si es del otro no tiramos nada
+						*/
+						const traca = this.jugadores[turno].sort();
+						console.log("Esto no vale TODO: " + traca);
+						cartaElegida = traca[0];
+					}
+				}
+				else{
+					// Nadie tiró pinte hay que tirar
+					if (cartasPinte.length){
+						cartaElegida = cartasPinte[0];	// Envío la primera por mandar algo
+					}
+				}	
 			}
 
 		}
 
-		/* Deshabilitar la carta */
-		/*
-		const indiceABorrar = this.jugadores[turno].indexOf(cartaElegida);
-		this.jugadores[turno][indiceABorrar] = null;	//Desaparece la carta
-		*/
+		
 
 		this.turnosCartas.push(cartaElegida);
 		this.compruebaMano();
@@ -163,6 +204,7 @@ class Partida{
 	ordenaMano(mano){
 		var arrayOrdenado=[];
 
+		const paloPinte = laBaraja.carta(this.cartaPinte).getIndicePalo();
 		for (var i=0;i<mano.length;i++){
 			if (i==0){
 				arrayOrdenado.push(mano[0]);
@@ -170,7 +212,7 @@ class Partida{
 				var j;
 				for (j=0;j<arrayOrdenado.length;j++){
 					if (Carta.esMayor( this.baraja.carta(mano[i]),
-						this.baraja.carta(arrayOrdenado[j]) )==true){
+						this.baraja.carta(arrayOrdenado[j]),null )==true){
 						arrayOrdenado.splice(j,0,mano[i]);
 						break;
 					}
@@ -204,6 +246,9 @@ class Partida{
 	}
 
 	filtraSuperaCarta(cartasUsuario,cartasTiradas){
+		if (cartasTiradas.length===0){
+			return cartasUsuario;
+		}
 		return cartasUsuario.filter(laCarta =>{
 			const cartaActual = this.baraja.carta(laCarta);
 			for (let i=0;i<cartasTiradas.length;i++){
@@ -214,6 +259,8 @@ class Partida{
 			}
 		});
 	}
+
+
 
 
 }

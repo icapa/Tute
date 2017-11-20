@@ -34,7 +34,7 @@ class Carta
 		return this.indiceValor;
 	}
 
-	static esMayor(carta1,carta2,palo){
+	static esMayor(carta1,carta2,paloPinte){
 		
 		if (carta1.palo == carta2.palo){
 		
@@ -55,14 +55,24 @@ class Carta
 			}
 		}
 		else{
-			if (carta1.getIndicePalo()<carta2.getIndicePalo()){
+			if (carta1.getIndicePalo() == paloPinte){
 				return true;
 			}
-			else{
+			if (carta2.getIndicePalo() == paloPinte){
 				return false;
 			}
+			// Si ninguna es pinte, gana la primera que se tiró
+			if (!paloPinte){
+				if(carta1.getIndicePalo()>carta2.getIndicePalo()){
+					return false;
+				}
+				else{
+					return true;
+				}
+			}
+			return true;
+			
 		}
-		return true;
 	}
 
 }

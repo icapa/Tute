@@ -81,8 +81,12 @@ function CrearDiv(jugador){
 		if (jugNum==4){
 			AsignaCartaImagen(jugNum,i,laBaraja.carta(carNum));
 		}
-		else{
-			AsignaCartaImagen(jugNum,i,undefined);
+		else{	// La carta que pinta dada la vueltan
+			if (laPartida.cartaPinte !== carNum){
+				AsignaCartaImagen(jugNum,i,undefined);
+			}else{
+				AsignaCartaImagen(jugNum,i,laBaraja.carta(carNum))
+			}
 		}
 	}
 	
