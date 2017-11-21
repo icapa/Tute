@@ -86,7 +86,7 @@ class Partida{
 
 	juegaLaMaquina(turno){
 	
-		let cartaElegida;
+		let cartaElegida=null;
 		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo(); 
 		if (this.turnosCartas.length!=0){
 			const paloPrimera= this.baraja.carta(this.turnosCartas[0]).getIndicePalo();
@@ -119,7 +119,9 @@ class Partida{
 					}else{
 						/* No tenemos pinte, si la mano es nuestra tiramos puntos, si es del otro no tiramos nada
 						*/
-						const traca = this.jugadores[turno].sort();
+						/* ESTO FALLA CUIDADO CON LOS ARRAYS ORDENADOS */
+						const traca = [...this.jugadores[turno]];
+						traca.sort();
 						console.log("Esto no vale TODO: " + traca);
 						cartaElegida = traca[0];
 					}
@@ -128,13 +130,21 @@ class Partida{
 					// Nadie tiró pinte hay que tirar
 					if (cartasPinte.length){
 						cartaElegida = cartasPinte[0];	// Envío la primera por mandar algo
+					}else{
+						/* Esto eslo mismo que el caso anterior */
+						const traca = [...this.jugadores[turno]];
+						traca.sort();
+						console.log("Esto no vale TODO: " + traca);
+						cartaElegida = traca[0];
 					}
 				}	
 			}
 
 		}
 
-		
+		if (cartaElegida==null){
+			console.error("NO SE HA SELECCIONADO CARTA!!!!");
+		}
 
 		this.turnosCartas.push(cartaElegida);
 		this.compruebaMano();
