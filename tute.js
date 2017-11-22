@@ -46,6 +46,10 @@ class Partida{
 
 	compruebaMano(callbackAcabado){
 		const paloPinte = laBaraja.carta(this.cartaPinte).getIndicePalo();
+		const cartaGanadora = this.quienVaGanando();
+		const usuarioGanador = this.turnosCartas.indexOf(cartaGanadora);
+		console.log("De momento gana la carta: " + cartaGanadora + "que es del usuario (0-3) ->" + usuarioGanador);
+
 		if(this.turnosCartas.length==this.numJugadores){
 			console.log("Mano completa!, a ver quién la gana: Mano:" + this.numeroMano);
 			let ordenados = [...this.turnosCartas];
@@ -268,6 +272,19 @@ class Partida{
 				}
 			}
 		});
+	}
+
+	quienVaGanando(){
+		return this.turnosCartas.reduce((maxima,carta,indice)=>{
+			if (indice==0){
+				maxima=carta;
+			}else{
+				if (Carta.esMayor(this.baraja.carta(carta),this.baraja.carta(maxima))){
+					maxima=carta;
+				}
+			}
+			return maxima;
+		})
 	}
 
 
