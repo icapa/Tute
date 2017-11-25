@@ -14,41 +14,45 @@ class Partida{
 		}
 
 		this.turnosCartas = new Array();
-		//this.turnoActual = Math.floor(Math.random()*numJugadores);
-		this.turnoActual = 2;
+		
+
+		this.reiniciaMano();
+				
+	}
+
+	reiniciaMano(){
+		//this.turnoInicialMano = Math.floor(Math.random()*numJugadores);
+		this.turnoInicialMano = 2;
+		this.turnoActual = this.turnoInicialMano;
 		this.numeroMano=0;
 
-		this.todasLasCartas=baraja.todas();
+		this.todasLasCartas=this.baraja.todas();
+
 
 		/* Esto es lo que habría que hacer en cada mano */
 		this.laMano = this.barajea();
 
 
-		this.cartaPinte = this.laMano[ (((this.turnoActual + this.numJugadores) % numJugadores)*10)+(numCartas-1)];
+		this.cartaPinte = this.laMano[ (((this.turnoActual + this.numJugadores) % this.numJugadores)*10)+(this.numCartas-1)];
 
 
 		this.reparte();
 
-		this.cartaPinte = this.jugadores[(this.turnoActual + this.numJugadores)% numJugadores][numCartas-1];
+		this.cartaPinte = this.jugadores[(this.turnoActual + this.numJugadores)% this.numJugadores][this.numCartas-1];
 
 
 
 
 
+		console.log("Pinta la carta: " + this.cartaPinte + "que es: " + this.baraja.carta(this.cartaPinte).valor);
 
-		console.log("Pinta la carta: " + this.cartaPinte + "que es: " + laBaraja.carta(this.cartaPinte).valor);
-
-		/* Debug */
-				
 	}
 
-
-
 	compruebaMano(callbackAcabado){
-		const paloPinte = laBaraja.carta(this.cartaPinte).getIndicePalo();
+		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo();
 		const cartaGanadora = this.quienVaGanando();
-		const usuarioGanador = this.turnosCartas.indexOf(cartaGanadora);
-		console.log("De momento gana la carta: " + cartaGanadora + "que es del usuario (0-3) ->" + usuarioGanador);
+		const tGanador = this.turnosCartas.indexOf(cartaGanadora);
+		console.log("De momento gana la carta: " + cartaGanadora + "que es del turno (0-3) ->" + tGanador + " jugador: " + this.jugadorGanadorTurno(tGanador) );
 
 		if(this.turnosCartas.length==this.numJugadores){
 			console.log("Mano completa!, a ver quién la gana: Mano:" + this.numeroMano);
@@ -286,7 +290,9 @@ class Partida{
 			return maxima;
 		})
 	}
-
+	jugadorGanadorTurno(turno){
+		return ((this.turnoInicialMano+1)+ this.numJugadores + turno) % this.numJugadores;
+	}
 
 
 
