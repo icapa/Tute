@@ -25,6 +25,11 @@ class Partida{
 		this.turnoInicialMano = 2;
 		this.turnoActual = this.turnoInicialMano;
 		this.numeroMano=0;
+		this.cartasGanadorasJugador=[];
+		this.cartasGanadorasMaquina=[];
+		this.puntosMaquina=0;
+		this.puntosJugador=0;
+
 
 		this.todasLasCartas=this.baraja.todas();
 
@@ -52,25 +57,19 @@ class Partida{
 		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo();
 		const cartaGanadora = this.quienVaGanando();
 		const tGanador = this.turnosCartas.indexOf(cartaGanadora);
-		console.log("De momento gana la carta: " + cartaGanadora + "que es del turno (0-3) ->" + tGanador + " jugador: " + this.jugadorGanadorTurno(tGanador) );
+		const ganadorReal = this.jugadorGanadorTurno(tGanador);
+		console.log("De momento gana la carta: " + cartaGanadora + "que es del turno (0-3) ->" + tGanador + " jugador: " + ganadorReal );
 
 		if(this.turnosCartas.length==this.numJugadores){
 			console.log("Mano completa!, a ver quién la gana: Mano:" + this.numeroMano);
-			let ordenados = [...this.turnosCartas];
-			ordenados.sort( (laCarta1, laCarta2) =>{
-				if (Carta.esMayor(laBaraja.carta(laCarta1),laBaraja.carta(laCarta2),paloPinte)) {
-					return -1;
-				}else{
-					return 1;
-				}
-			});
+			
 
-			console.log("El array de ordenados es: " + ordenados);
+			console.log("GANO LA MANO EL JUGADOR: " + ganadorReal);	
 
+			this.calculaPuntosMano(ganadorReal);
+			
+			console.log("Maquina: " + this.puntosMaquina+ ", Jugador: " + this.puntosJugador);
 
-			const turnoGanador = this.turnosCartas.indexOf(ordenados[0]);
-
-			console.log("GANO LA MANO EL JUGADOR: " + turnoGanador);	
 
 
 			this.numeroMano++;
@@ -78,6 +77,11 @@ class Partida{
 			this.turnosCartas = [];
 			if (this.numeroMano==this.numCartas){
 				console.log("BIEN ACABO LA PARTIDA !!!!");
+				if (this.puntosMaquina>this.puntosJugador){
+					console.log("Gano la maquina!!!");
+				}else{
+					console.log("Gano el jugador!!!");
+				}
 				if (callbackAcabado){
 					callbackAcabado()
 				}
@@ -85,7 +89,18 @@ class Partida{
 		}
 	}
 
+	calculaPuntosMano(ganadorReal){
+		
+		if (ganadorReal%2===0) {
+			this.cartasGanadorasMaquina=this.cartasGanadorasMaquina.concat(this.turnosCartas);
+			this.puntosMaquina = this.puntosMaquina + this.puntosEnMano(this.turnosCartas);
+		}
+		else{
+			this.cartasGanadorasJugador=this.cartasGanadorasJugador.concat(this.turnosCartas);
+			this.puntosJugador=this.puntosJugador + this.puntosEnMano(this.turnosCartas);
+		}
 
+	}
 	juegaElUsuario(carta){
 		console.log("El usuario tiro la carta: " + carta);
 		this.turnosCartas.push(carta);
@@ -292,6 +307,12 @@ class Partida{
 	}
 	jugadorGanadorTurno(turno){
 		return ((this.turnoInicialMano+1)+ this.numJugadores + turno) % this.numJugadores;
+	}
+	puntosEnMano(listaDeCartas){
+		return listaDeCartas.reduce( (valor,carta) =>{
+			valor =  valor + this.baraja.carta(carta).valor.valor;
+			return valor;
+		},0);
 	}
 
 
