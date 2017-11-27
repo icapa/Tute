@@ -1,4 +1,5 @@
 class Partida{
+	
 	constructor(numJugadores,numCartas,baraja){
 		this.baraja=baraja;
 		this.numJugadores=numJugadores;
@@ -20,6 +21,19 @@ class Partida{
 				
 	}
 
+	/* Funciones de callback */
+	setOnTurnoFinalizado(callback){
+		this.onTurnoFinalizado=callback;
+	}
+
+	setOnManoFinalizada(callback){
+		this.onManoFinalizada=callback;
+	}
+
+
+
+
+
 	reiniciaMano(){
 		//this.turnoInicialMano = Math.floor(Math.random()*numJugadores);
 		this.turnoInicialMano = 2;
@@ -32,6 +46,8 @@ class Partida{
 
 
 		this.todasLasCartas=this.baraja.todas();
+
+		this.losCantes = [null,null,null,null];
 
 
 		/* Esto es lo que habría que hacer en cada mano */
@@ -46,9 +62,11 @@ class Partida{
 		this.cartaPinte = this.jugadores[(this.turnoActual + this.numJugadores)% this.numJugadores][this.numCartas-1];
 
 
+		this.rellenaLosCantes();
 
 
 
+ 	
 		console.log("Pinta la carta: " + this.cartaPinte + "que es: " + this.baraja.carta(this.cartaPinte).valor);
 
 	}
@@ -70,7 +88,13 @@ class Partida{
 			
 			console.log("Maquina: " + this.puntosMaquina+ ", Jugador: " + this.puntosJugador);
 
+			this.rellenaLosCantes();
 
+			const puntosPinte = this.puntosPorCante(ganadorReal);
+			console.log("Puntos por cante: " + puntosPinte);
+
+			
+			
 
 			this.numeroMano++;
 			
@@ -85,6 +109,7 @@ class Partida{
 				if (callbackAcabado){
 					callbackAcabado()
 				}
+				
 			}
 		}
 	}
@@ -110,7 +135,12 @@ class Partida{
 	juegaLaMaquina(turno){
 	
 		let cartaElegida=null;
-		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo(); 
+		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo();
+		const cartaGanadora = this.quienVaGanando();
+		const tGanador = this.turnosCartas.indexOf(cartaGanadora);
+		const ganadorReal = this.jugadorGanadorTurno(tGanador);
+		
+		
 		if (this.turnosCartas.length!=0){
 			const paloPrimera= this.baraja.carta(this.turnosCartas[0]).getIndicePalo();
 			const disponibles = this.filtraPorPalo(this.jugadores[turno],paloPrimera);
@@ -120,10 +150,21 @@ class Partida{
 			if (disponibles.length){
 				if (disponiblesMayores.length){
 					console.log("Tenemos opciones para tirar TODO");
-					cartaElegida = disponiblesMayores[0];	// TODO: Tiramos la primera no miramos mas, esto es muy cutre
+					if (ganadorReal%2===0){
+						cartaElegida = disponiblesMayores[0];
+					}
+					else{
+						cartaElegida = disponiblesMayores[disponiblesMayores.length-1]
+					}
+
 				}else{
 					console.log("No hay supeior, hay que tirar de pinte, tiramos cualquiera TODO");
-					cartaElegida =disponibles[0];	
+					if (ganadorReal%2===0){	
+						cartaElegida =disponibles[0];
+					}
+					else{
+						cartaElegida = disponibles[disponibles.length-1];
+					}	
 				}
 			}
 			else{
@@ -144,9 +185,22 @@ class Partida{
 						*/
 						/* ESTO FALLA CUIDADO CON LOS ARRAYS ORDENADOS */
 						const traca = [...this.jugadores[turno]];
-						traca.sort();
-						console.log("Esto no vale TODO: " + traca);
-						cartaElegida = traca[0];
+						if (ganadorReal%2===0){
+							traca.sort();
+							console.log("Como gana el compañero tiro la de mas puntos: " + traca);
+							cartaElegida = traca[0];
+						}else{
+							traca.reverse();
+							console.log("Como voy perdiendo la mano tiro menos puntos: " + traca);
+							cartaElegida = traca.reduce((carta,elemento) =>{
+								if (carta===null){
+									if (elemento!==null){
+										carta=elemento;
+									}
+								}
+								return carta;
+							},null);
+						}
 					}
 				}
 				else{
@@ -156,9 +210,22 @@ class Partida{
 					}else{
 						/* Esto eslo mismo que el caso anterior */
 						const traca = [...this.jugadores[turno]];
-						traca.sort();
-						console.log("Esto no vale TODO: " + traca);
-						cartaElegida = traca[0];
+						if (ganadorReal%2===0){
+							traca.sort();
+							console.log("Como gana el compañero tiro la de mas puntos: " + traca);
+							cartaElegida = traca[0];
+						}else{
+							traca.reverse();
+							console.log("Como voy perdiendo la mano tiro menos puntos: " + traca);
+							cartaElegida = traca.reduce((carta,elemento) =>{
+								if (carta===null){
+									if (elemento!==null){
+										carta=elemento;
+									}
+								}
+								return carta;
+							},null);
+						}
 					}
 				}	
 			}
@@ -294,11 +361,12 @@ class Partida{
 	}
 
 	quienVaGanando(){
+		const paloPinte = laBaraja.carta(this.cartaPinte).getIndicePalo();
 		return this.turnosCartas.reduce((maxima,carta,indice)=>{
 			if (indice==0){
 				maxima=carta;
 			}else{
-				if (Carta.esMayor(this.baraja.carta(carta),this.baraja.carta(maxima))){
+				if (Carta.esMayor(this.baraja.carta(carta),this.baraja.carta(maxima),paloPinte)){
 					maxima=carta;
 				}
 			}
@@ -316,5 +384,45 @@ class Partida{
 	}
 
 
+	
+
+	buscaCante(cartas,palo){
+		let caballo = (palo * this.numCartas)+8;
+		let rey = (palo * this.numCartas)+9;
+		return (cartas.indexOf(caballo)!=-1 && cartas.indexOf(rey)!=-1) ? true: false;
+	}
+
+	rellenaLosCantes(){
+		for (var i=0;i<this.numJugadores;i++){
+			for (var palo=0;palo<4;palo++){
+				if (this.buscaCante(this.jugadores[i],palo)){
+					this.losCantes[palo]=i;
+				}else{
+					this.losCantes[palo]=null;
+				}
+			}
+		}
+	}
+
+	puntosPorCante(elJugador,paloPinte){
+		return this.losCantes.reduce((puntos,elemento,indice)=>{
+			if (elemento==elJugador){		
+				if (indice==paloPinte){
+					puntos=puntos+40;
+				}else{
+					puntos=puntos+20;
+				}
+				this.losCantes[indice]=null;
+			}
+			return puntos;
+		},0);
+	}
+
+	esElUltimoTurno(){
+		return (this.turnosCartas.length===3) ? true:false;
+
+	}
+
+	
 
 }

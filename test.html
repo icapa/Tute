@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Test para tute</title>
+ 
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.1.css">
+  <script src="https://code.jquery.com/qunit/qunit-2.4.1.js"></script>
+  <script src="baraja.js"></script>
+  <script src="tute.js"></script>
+
+ 
+  <script>
+    let imgCartaAncho = 208;
+    let imgCartaAlto = 320;
+    let numeroJugadores=4;
+    let numeroCartasJugador=10;
+
+    let laBaraja = new Baraja();
+    var laPartida = new Partida(numeroJugadores,numeroCartasJugador,laBaraja);
+
+    let asDeOros=0;
+    let dosDeOros=1;
+    let tresDeOros=2;
+    let dosDeCopas=11;
+    let paloPintaCopas=1;  // Bastos
+    let asDeBastos=30;
+
+    const cartasConCanteOros=[0,1,2,3,4,5,6,7,8,9];
+    const paloOros=0;
+    const paloCopas=1;
+
+    QUnit.test("Mismo palo sin carta de pinte", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(asDeOros),laBaraja.carta(dosDeOros)),true);
+    });
+    QUnit.test("Mismo palo sin carta de pinte - reverso", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(dosDeOros),laBaraja.carta(asDeOros)),false);
+
+    });
+    QUnit.test("Mismo palo sin carta de pinte y los dos puntos", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(asDeOros),laBaraja.carta(tresDeOros)),true);
+
+    });
+    QUnit.test("Mismo palo sin carta de pinte y los dos puntos-reverso", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(tresDeOros),laBaraja.carta(asDeOros)),false);
+
+    });
+    QUnit.test("Prueba con pinte", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(asDeOros),laBaraja.carta(dosDeCopas),paloPintaCopas),false);
+
+    });
+    QUnit.test("Prueba con pinte - reverso", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(dosDeCopas),laBaraja.carta(asDeOros),paloPintaCopas),true);
+
+    });
+    QUnit.test("Prueba con pinte, ninguna es pinte", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(asDeOros),laBaraja.carta(asDeBastos),paloPintaCopas),true);
+
+    });
+    QUnit.test("Prueba con pinte, ninguna es pinte -2 ", function( assert ) {
+      assert.equal(Carta.esMayor(laBaraja.carta(tresDeOros),laBaraja.carta(asDeBastos),paloPintaCopas),true);
+
+    });
+
+    QUnit.test("Buscando el cante en los oros", function( assert ) {
+      assert.equal(laPartida.buscaCante(cartasConCanteOros,paloOros),true);
+
+    });
+    QUnit.test("Buscando el cante en los copas siendo todo oros", function( assert ) {
+      assert.equal(laPartida.buscaCante(cartasConCanteOros,paloCopas),false);
+      
+    });
+
+
+      
+
+    
+  
+
+  </script>
+</head>
+<body>
+ 
+<div id="qunit"></div>
+
+ 
+</body>
+</html>

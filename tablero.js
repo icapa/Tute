@@ -4,7 +4,7 @@ let numeroJugadores=4;
 let numeroCartasJugador=10;
 
 let laBaraja = new Baraja();
-var laPartida = new Partida(numeroJugadores,numeroCartasJugador,laBaraja);
+var laPartida = new Partida (numeroJugadores,numeroCartasJugador,laBaraja);
 
 
 $(document).ready(function(){
@@ -13,7 +13,13 @@ $(document).ready(function(){
 	CrearDiv('#jugador3');
 	CrearDiv('#jugador4');
 
+
 	AsignaEventosCartas('#jugador4');
+
+	/* Callback de la partida */
+	laPartida.setOnManoFinalizada(() => alert('Acabo la mano'));
+	laPartida.setOnTurnoFinalizado(() => alert('Turno finalizado'));
+
 
 	laPartida.siguienteTurno(function(usuario){
 		console.log('El callback de tablero recibe: ' + usuario[0] + ' y ' + usuario[1]);
@@ -21,6 +27,7 @@ $(document).ready(function(){
 	});
 
 })
+
 
 
 
@@ -164,6 +171,7 @@ function TiraLaCarta(usuario,numeroCarta){
 		laPartida.juegaElUsuario(cartaReal);
 		
 	}
+
 	/*
 	
 	*/
