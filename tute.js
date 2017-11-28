@@ -72,12 +72,14 @@ class Partida{
 
 	}
 
-	compruebaMano(callbackAcabado){
+	compruebaMano(){
 		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo();
 		const cartaGanadora = this.quienVaGanando();
 		const tGanador = this.turnosCartas.indexOf(cartaGanadora);
 		const ganadorReal = this.jugadorGanadorTurno(tGanador);
 		console.log("De momento gana la carta: " + cartaGanadora + "que es del turno (0-3) ->" + tGanador + " jugador: " + ganadorReal );
+
+		this.onTurnoFinalizado();
 
 		if(this.turnosCartas.length==this.numJugadores){
 			console.log("Mano completa!, a ver quién la gana: Mano:" + this.numeroMano);
@@ -94,6 +96,7 @@ class Partida{
 			const puntosPinte = this.puntosPorCante(ganadorReal);
 			console.log("Puntos por cante: " + puntosPinte);
 
+
 			
 			
 
@@ -107,9 +110,7 @@ class Partida{
 				}else{
 					console.log("Gano el jugador!!!");
 				}
-				if (callbackAcabado){
-					callbackAcabado()
-				}
+				this.onManoFinalizada();
 				
 			}
 		}
@@ -249,15 +250,18 @@ class Partida{
 		let laTirada;
 		this.turnoActual = (this.turnoActual+1)%this.numJugadores;
 		
-		//while(this.turnoActual!= this.numJugadores-1){
+		// Si es el jugador no se hace nada
+		if (this.jugadorGanadorTurno(this.turnoActual)===3){
+			console.log("NO JUEGA LA MAQUINA");
+			return;;
+		}
+
+		console.log("Juega la máquina el usuario: " + this.turnoActual);
+		laTirada = this.juegaLaMaquina(this.turnoActual);
+		callback(laTirada);
+		/* Aqui anulamos la carta para que no se pueda usar */
+		this.jugadores[laTirada[0]][laTirada[1]] = null;
 			
-			console.log("Juega la máquina el usuario: " + this.turnoActual);
-			laTirada = this.juegaLaMaquina(this.turnoActual);
-			callback(laTirada);
-			/* Aqui anulamos la carta para que no se pueda usar */
-			this.jugadores[laTirada[0]][laTirada[1]] = null;
-			//this.turnoActual = (this.turnoActual+1)%this.numJugadores;
-		//}
 	}
 
 
@@ -438,8 +442,10 @@ class Partida{
 			return carta;
 		},[])
 		return arrayCarta[0];
+	}
 
-
+	esUltimoTurno(){
+		return (this.turnoActual===this.numCartas-1) ? true:false;  
 	}
 	
 

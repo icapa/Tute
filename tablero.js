@@ -6,19 +6,21 @@ let numeroCartasJugador=10;
 let laBaraja = new Baraja();
 var laPartida = new Partida (numeroJugadores,numeroCartasJugador,laBaraja);
 
-var tiradaTurno;
+
+
 
 function  nuevaTirada(){
-	return setInterval(() => 
+	setTimeout(() => 
 		laPartida.siguienteTurno(function(usuario){
 			TiraLaCarta(usuario[0]+1,usuario[1]);
 			console.log("TIRANDOOOOOOOOO....."+ laPartida.turnoActual);
-			if (usuario[0]===2)
-			{ 
-				clearInterval(tiradaTurno);
-			}
 		}),1000);
 } 
+
+function acaboLaMano(){
+	clearInterval(tiradaTurno);
+	alert('Acabo la mano !! ');
+}
 
 
 $(document).ready(function(){
@@ -31,11 +33,11 @@ $(document).ready(function(){
 	AsignaEventosCartas('#jugador4');
 
 	/* Callback de la partida */
-	laPartida.setOnManoFinalizada(() => alert('Acabo la mano'));
-	laPartida.setOnTurnoFinalizado(() => alert('Turno finalizado'));
+	laPartida.setOnManoFinalizada(acaboLaMano);
+	laPartida.setOnTurnoFinalizado(nuevaTirada);
 
 
-	
+	/* Arrancamos la primera tirada */	
 	tiradaTurno = nuevaTirada();
 	
 
@@ -165,12 +167,15 @@ function AsignaEventosCartas(eldiv){
 		$(eldiv+i).click(
 			function(objeto){
 				var usuario = parseInt(objeto.target.id.substr(-2,1));
-				var carta = parseInt(objeto.target.id.substr(-1,1));
-				TiraLaCarta(usuario,carta);
-				laPartida.siguienteTurno(function(usuario,carta){
-					TiraLaCarta(usuario[0]+1,usuario[1]);
-					});
-
+				if (usuario===4){
+					var carta = parseInt(objeto.target.id.substr(-1,1));
+					TiraLaCarta(usuario,carta);
+					/*
+					if (laPartida.esUltimoTurno()===false){
+						nuevaTirada();
+					}
+					*/
+				}
 			}
 		);
 	}
