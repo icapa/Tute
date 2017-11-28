@@ -6,6 +6,20 @@ let numeroCartasJugador=10;
 let laBaraja = new Baraja();
 var laPartida = new Partida (numeroJugadores,numeroCartasJugador,laBaraja);
 
+var tiradaTurno;
+
+function  nuevaTirada(){
+	return setInterval(() => 
+		laPartida.siguienteTurno(function(usuario){
+			TiraLaCarta(usuario[0]+1,usuario[1]);
+			console.log("TIRANDOOOOOOOOO....."+ laPartida.turnoActual);
+			if (usuario[0]===2)
+			{ 
+				clearInterval(tiradaTurno);
+			}
+		}),1000);
+} 
+
 
 $(document).ready(function(){
 	CrearDiv('#jugador1');
@@ -21,10 +35,9 @@ $(document).ready(function(){
 	laPartida.setOnTurnoFinalizado(() => alert('Turno finalizado'));
 
 
-	laPartida.siguienteTurno(function(usuario){
-		console.log('El callback de tablero recibe: ' + usuario[0] + ' y ' + usuario[1]);
-		TiraLaCarta(usuario[0]+1,usuario[1]);
-	});
+	
+	tiradaTurno = nuevaTirada();
+	
 
 })
 

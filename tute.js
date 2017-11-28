@@ -36,7 +36,8 @@ class Partida{
 
 	reiniciaMano(){
 		//this.turnoInicialMano = Math.floor(Math.random()*numJugadores);
-		this.turnoInicialMano = 2;
+		this.turnoInicialMano = 3;
+		
 		this.turnoActual = this.turnoInicialMano;
 		this.numeroMano=0;
 		this.cartasGanadorasJugador=[];
@@ -139,9 +140,12 @@ class Partida{
 		const cartaGanadora = this.quienVaGanando();
 		const tGanador = this.turnosCartas.indexOf(cartaGanadora);
 		const ganadorReal = this.jugadorGanadorTurno(tGanador);
-		
-		
-		if (this.turnosCartas.length!=0){
+		if (this.turnosCartas.length===0){
+			console.log("SOY EL PRIMERO EN TIRAR!");
+			cartaElegida=this.cartaMasAltaSinPinte(turno);
+
+		}
+		else{
 			const paloPrimera= this.baraja.carta(this.turnosCartas[0]).getIndicePalo();
 			const disponibles = this.filtraPorPalo(this.jugadores[turno],paloPrimera);
 			console.log("Del palo de la primera hay: " + disponibles);
@@ -245,15 +249,15 @@ class Partida{
 		let laTirada;
 		this.turnoActual = (this.turnoActual+1)%this.numJugadores;
 		
-		while(this.turnoActual!= this.numJugadores-1){
+		//while(this.turnoActual!= this.numJugadores-1){
 			
 			console.log("Juega la máquina el usuario: " + this.turnoActual);
 			laTirada = this.juegaLaMaquina(this.turnoActual);
 			callback(laTirada);
 			/* Aqui anulamos la carta para que no se pueda usar */
 			this.jugadores[laTirada[0]][laTirada[1]] = null;
-			this.turnoActual = (this.turnoActual+1)%this.numJugadores;
-		}
+			//this.turnoActual = (this.turnoActual+1)%this.numJugadores;
+		//}
 	}
 
 
@@ -371,7 +375,7 @@ class Partida{
 				}
 			}
 			return maxima;
-		})
+		},this.turnoActual)
 	}
 	jugadorGanadorTurno(turno){
 		return ((this.turnoInicialMano+1)+ this.numJugadores + turno) % this.numJugadores;
@@ -423,6 +427,20 @@ class Partida{
 
 	}
 
+
+	/* Esto es cuando tiene que salir */
+	cartaMasAltaSinPinte(jugador,pinte){
+		const cartas = [...this.jugadores[jugador]];
+		let  arrayCarta = cartas.reduce((carta,elemento)=>{
+			if (elemento!=null){
+				carta.push(elemento)
+			}
+			return carta;
+		},[])
+		return arrayCarta[0];
+
+
+	}
 	
 
 }
