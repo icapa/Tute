@@ -10,18 +10,51 @@ var laPartida = new Partida (numeroJugadores,numeroCartasJugador,laBaraja);
 
 
 function  nuevaTirada(){
-	setTimeout(() => 
-		laPartida.siguienteTurno(function(usuario){
-			TiraLaCarta(usuario[0]+1,usuario[1]);
-			console.log("TIRANDOOOOOOOOO....."+ laPartida.turnoActual);
+	const esUltimoTurno = laPartida.esUltimoTurno();
+	const esUltimoJugador = laPartida.esUltimoJugador();
+
+
+
+	console.log("El turno de la carta: " +  laPartida.turnosCartas.length);
+
+	console.log("El turno de la mano: " + laPartida.numeroMano);  
+
+
+	console.log("Nueva tirada, esUltimoJugador: "+esUltimoJugador+ ", esUltimoTurno: " + esUltimoTurno);
+	
+
+	$('#carta1').removeClass("cartaGanaJugador");
+	$('#carta2').removeClass("cartaGanaJugador");
+	$('#carta3').removeClass("cartaGanaJugador");
+	$('#carta4').removeClass("cartaGanaJugador");
+
+	if (laPartida.esUltimoTurno()===false && laPartida.esUltimoJugador()===false){
+		setTimeout(() => 
+			laPartida.siguienteTurno(function(usuario){
+				TiraLaCarta(usuario[0]+1,usuario[1]);
+				console.log("TIRANDOOOOOOOOO....."+ laPartida.turnoActual);
 		}),1000);
+	}
 } 
 
 function acaboLaMano(){
-	clearInterval(tiradaTurno);
 	alert('Acabo la mano !! ');
 }
 
+function rondaFinalizada(){
+	setTimeout(()=> {
+		$('#carta1').addClass("cartaGanaJugador");
+		$('#carta2').addClass("cartaGanaJugador");
+		$('#carta3').addClass("cartaGanaJugador");
+		$('#carta4').addClass("cartaGanaJugador");
+		BorraCartasTiradas();
+	},1000);
+	setTimeout(() => {
+			
+		nuevaTirada();
+	},2000);
+	
+}
 
 $(document).ready(function(){
 	CrearDiv('#jugador1');
@@ -35,10 +68,12 @@ $(document).ready(function(){
 	/* Callback de la partida */
 	laPartida.setOnManoFinalizada(acaboLaMano);
 	laPartida.setOnTurnoFinalizado(nuevaTirada);
+	laPartida.setOnRondaFinalizada(rondaFinalizada);
 
+	nuevaTirada();
 
 	/* Arrancamos la primera tirada */	
-	tiradaTurno = nuevaTirada();
+	
 	
 
 })
@@ -57,6 +92,8 @@ function CrearDiv(jugador){
 	var propiedades;
 	var alineacionVertical;
 	var alineacionHorizontal;
+
+	var jugNum = parseInt(jugador.substr(-1,1));
 
 	if (jugador==='#jugador1' || jugador==='#jugador3'){	
 		direccion='vertical'; 
@@ -97,7 +134,7 @@ function CrearDiv(jugador){
 			.attr('style',propiedades)			
 			.appendTo($(jugador))
 
-		var jugNum = parseInt(jugador.substr(-1,1));
+		
 		var carNum = laPartida.dameCarta(jugNum-1,i);
 		
 		if (jugNum==4){
@@ -113,6 +150,15 @@ function CrearDiv(jugador){
 	}
 	
 }
+
+function BorraCartasTiradas(){
+	TiraCartaImagen(1,null);
+	TiraCartaImagen(2,null);
+	TiraCartaImagen(3,null);
+	TiraCartaImagen(4,null);
+
+}
+
 
 function TiraCartaImagen(jugador,carta){
 	var i = IndiceCartaImagen(carta);
@@ -137,6 +183,10 @@ function AsignaCartaImagen(jugador,numero,carta){
 
 function IndiceCartaImagen(carta){
 	var arregla8y9=0;
+
+	if (carta===null){
+		return[0, 320];	// En blanco
+	}
 	if (carta===undefined){
 		return [-imgCartaAncho, -(imgCartaAlto*4)];	// Dada la vuelta
 	}

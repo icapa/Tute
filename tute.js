@@ -30,6 +30,10 @@ class Partida{
 		this.onManoFinalizada=callback;
 	}
 
+	setOnRondaFinalizada(callback){
+		this.onRondaFinalizada=callback;
+	}
+
 
 
 
@@ -96,7 +100,7 @@ class Partida{
 			const puntosPinte = this.puntosPorCante(ganadorReal);
 			console.log("Puntos por cante: " + puntosPinte);
 
-
+			this.onRondaFinalizada();
 			
 			
 
@@ -426,8 +430,8 @@ class Partida{
 		},0);
 	}
 
-	esElUltimoTurno(){
-		return (this.turnosCartas.length===3) ? true:false;
+	esUltimoJugador(){
+		return (this.turnosCartas.length===4) ? true:false;
 
 	}
 
@@ -445,8 +449,9 @@ class Partida{
 	}
 
 	esUltimoTurno(){
-		return (this.turnoActual===this.numCartas-1) ? true:false;  
+		return (this.numeroMano===this.numCartas) ? true:false;  
 	}
 	
+
 
 }
