@@ -16,11 +16,13 @@
 .cartaGanaJugador{
 	top: 1600px !important;
 	left: 1600px !important;
+	background: url('baraja_completa.png') -208px -1280px !important;
 }
 
 .cartaGanaMaquina{
 	top: 0px !important;
 	left: 0px !important;
+	background: url('baraja_completa.png') -208px -1280px !important;
 }
 
 

@@ -27,6 +27,10 @@ function  nuevaTirada(){
 	$('#carta2').removeClass("cartaGanaJugador");
 	$('#carta3').removeClass("cartaGanaJugador");
 	$('#carta4').removeClass("cartaGanaJugador");
+	$('#carta1').removeClass("cartaGanaMaquina");
+	$('#carta2').removeClass("cartaGanaMaquina");
+	$('#carta3').removeClass("cartaGanaMaquina");
+	$('#carta4').removeClass("cartaGanaMaquina");
 
 	if (laPartida.esUltimoTurno()===false && laPartida.esUltimoJugador()===false){
 		setTimeout(() => 
@@ -37,16 +41,24 @@ function  nuevaTirada(){
 	}
 } 
 
-function acaboLaMano(){
-	alert('Acabo la mano !! ');
+function acaboLaMano(ganador){
+	var textoGanador = (ganador%2)?"Jugador":"Maquina";
+	console.log("Acabo la mano, ganó: " + textoGanador);
 }
 
-function rondaFinalizada(){
+function rondaFinalizada(ganadorReal){
 	setTimeout(()=> {
-		$('#carta1').addClass("cartaGanaJugador");
-		$('#carta2').addClass("cartaGanaJugador");
-		$('#carta3').addClass("cartaGanaJugador");
-		$('#carta4').addClass("cartaGanaJugador");
+		if (ganadorReal%2!==0){
+			$('#carta1').addClass("cartaGanaJugador");
+			$('#carta2').addClass("cartaGanaJugador");
+			$('#carta3').addClass("cartaGanaJugador");
+			$('#carta4').addClass("cartaGanaJugador");
+		}else{
+			$('#carta1').addClass("cartaGanaMaquina");
+			$('#carta2').addClass("cartaGanaMaquina");
+			$('#carta3').addClass("cartaGanaMaquina");
+			$('#carta4').addClass("cartaGanaMaquina");
+		}
 		BorraCartasTiradas();
 	},1000);
 	setTimeout(() => {

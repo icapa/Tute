@@ -100,7 +100,7 @@ class Partida{
 			const puntosPinte = this.puntosPorCante(ganadorReal);
 			console.log("Puntos por cante: " + puntosPinte);
 
-			this.onRondaFinalizada();
+			this.onRondaFinalizada(ganadorReal);
 			
 			
 
@@ -114,7 +114,7 @@ class Partida{
 				}else{
 					console.log("Gano el jugador!!!");
 				}
-				this.onManoFinalizada();
+				this.onManoFinalizada(ganadorReal);
 				
 			}
 		}
