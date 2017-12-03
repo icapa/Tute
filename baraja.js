@@ -75,6 +75,8 @@ class Carta
 		}
 	}
 
+	
+
 }
 
 class Baraja

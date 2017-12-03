@@ -12,17 +12,9 @@ var laPartida = new Partida (numeroJugadores,numeroCartasJugador,laBaraja);
 function  nuevaTirada(){
 	const esUltimoTurno = laPartida.esUltimoTurno();
 	const esUltimoJugador = laPartida.esUltimoJugador();
-
-
-
 	console.log("El turno de la carta: " +  laPartida.turnosCartas.length);
-
 	console.log("El turno de la mano: " + laPartida.numeroMano);  
-
-
 	console.log("Nueva tirada, esUltimoJugador: "+esUltimoJugador+ ", esUltimoTurno: " + esUltimoTurno);
-	
-
 	$('#carta1').removeClass("cartaGanaJugador");
 	$('#carta2').removeClass("cartaGanaJugador");
 	$('#carta3').removeClass("cartaGanaJugador");
@@ -31,7 +23,6 @@ function  nuevaTirada(){
 	$('#carta2').removeClass("cartaGanaMaquina");
 	$('#carta3').removeClass("cartaGanaMaquina");
 	$('#carta4').removeClass("cartaGanaMaquina");
-
 	if (laPartida.esUltimoTurno()===false && laPartida.esUltimoJugador()===false){
 		setTimeout(() => 
 			laPartida.siguienteTurno(function(usuario){
@@ -44,7 +35,11 @@ function  nuevaTirada(){
 function acaboLaMano(ganador){
 	var textoGanador = (ganador%2)?"Jugador":"Maquina";
 	console.log("Acabo la mano, ganó: " + textoGanador);
+	laPartida.reiniciaMano();
+	CreaPartida();
 }
+
+
 
 function rondaFinalizada(ganadorReal){
 	setTimeout(()=> {
@@ -61,22 +56,24 @@ function rondaFinalizada(ganadorReal){
 		}
 		BorraCartasTiradas();
 	},1000);
-	setTimeout(() => {
-			
+	setTimeout(() => {			
 		nuevaTirada();
 	},2000);
 	
 }
 
 $(document).ready(function(){
+	CreaPartida();
+})
+
+
+
+function CreaPartida(){
 	CrearDiv('#jugador1');
 	CrearDiv('#jugador2');
 	CrearDiv('#jugador3');
 	CrearDiv('#jugador4');
-
-
 	AsignaEventosCartas('#jugador4');
-
 	/* Callback de la partida */
 	laPartida.setOnManoFinalizada(acaboLaMano);
 	laPartida.setOnTurnoFinalizado(nuevaTirada);
@@ -84,15 +81,7 @@ $(document).ready(function(){
 
 	nuevaTirada();
 
-	/* Arrancamos la primera tirada */	
-	
-	
-
-})
-
-
-
-
+}
 
 
 
@@ -104,8 +93,14 @@ function CrearDiv(jugador){
 	var propiedades;
 	var alineacionVertical;
 	var alineacionHorizontal;
+	var d;
+	let existenLosDiv=false;
 
 	var jugNum = parseInt(jugador.substr(-1,1));
+
+	const divABuscar = "jugador" + jugNum + "1";
+
+	existenLosDiv = document.getElementById(divABuscar);
 
 	if (jugador==='#jugador1' || jugador==='#jugador3'){	
 		direccion='vertical'; 
@@ -134,23 +129,30 @@ function CrearDiv(jugador){
 			izquierda=i*90;
 		}
 		propiedades=
-			'position: absolute;'+			
+			'position: absolute;'+		
 			alineacionVertical + arriba+'px;'+
 			alineacionHorizontal + izquierda+'px;'+
 			'z-index: '+(i+100);
 		
+		
 
-		d=document.createElement('div');
-		$(d).addClass('carta')
-			.attr('id',jugador.substring(1)+i)
-			.attr('style',propiedades)			
-			.appendTo($(jugador))
+		if (!existenLosDiv){
+			d=document.createElement('div');
+			$(d).addClass('carta')
+				.attr('id',jugador.substring(1)+i)
+				.attr('style',propiedades)		
+				.appendTo($(jugador))
+		}
 
+		VisibleCartaTirada(jugNum,i);
 		
 		var carNum = laPartida.dameCarta(jugNum-1,i);
 		
 		if (jugNum==4){
 			AsignaCartaImagen(jugNum,i,laBaraja.carta(carNum));
+			if (laBaraja.carta(carNum).palo===laBaraja.carta(laPartida.cartaPinte).palo){
+				$(d).addClass('cartaPinte');
+			}
 		}
 		else{	// La carta que pinta dada la vueltan
 			if (laPartida.cartaPinte !== carNum){
@@ -182,6 +184,11 @@ function TiraCartaImagen(jugador,carta){
 function OcultaCartaTirada(jugador,indiceCarta){
 	$('#jugador'+jugador+indiceCarta)
 		.css({'display':'none'});
+}
+
+function VisibleCartaTirada(jugador,indiceCarta){
+	$('#jugador'+jugador+indiceCarta)
+		.css({'display':'block'});
 }
 
 function AsignaCartaImagen(jugador,numero,carta){

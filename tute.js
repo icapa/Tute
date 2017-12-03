@@ -64,7 +64,7 @@ class Partida{
 
 		this.reparte();
 
-		this.cartaPinte = this.jugadores[(this.turnoActual + this.numJugadores)% this.numJugadores][this.numCartas-1];
+		//this.cartaPinte = this.jugadores[(this.turnoActual + this.numJugadores)% this.numJugadores][this.numCartas-1];
 
 
 		this.rellenaLosCantes();
@@ -108,13 +108,18 @@ class Partida{
 			
 			this.turnosCartas = [];
 			if (this.numeroMano==this.numCartas){
+
+				(ganadorReal%2)?this.puntosJugador=this.puntosJugador+10:this.puntosMaquina=this.puntosMaquina+10;
+				console.log("Y con las 10 de últimas, Maquina: "+ this.puntosMaquina + ", jugador: "+this.puntosJugador);
 				console.log("BIEN ACABO LA PARTIDA !!!!");
 				if (this.puntosMaquina>this.puntosJugador){
 					console.log("Gano la maquina!!!");
+					this.onManoFinalizada(0);
 				}else{
 					console.log("Gano el jugador!!!");
+					this.onManoFinalizada(1);
 				}
-				this.onManoFinalizada(ganadorReal);
+				
 				
 			}
 		}

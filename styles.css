@@ -12,6 +12,13 @@
 	zoom: 0.5;
 }
 
+.cartaPinte{
+	border-color: red !important;
+	border-width: 3px;
+	border-style: solid;
+	border-radius: 15px
+
+}
 
 .cartaGanaJugador{
 	top: 1600px !important;
