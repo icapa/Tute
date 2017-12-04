@@ -35,8 +35,10 @@ function  nuevaTirada(){
 function acaboLaMano(ganador){
 	var textoGanador = (ganador%2)?"Jugador":"Maquina";
 	console.log("Acabo la mano, ganó: " + textoGanador);
+	alert('Ganó la mano: '+ textoGanador);
 	laPartida.reiniciaMano();
-	CreaPartida();
+	setTimeout(() => CreaPartida(),2000);
+	
 }
 
 
@@ -239,11 +241,6 @@ function AsignaEventosCartas(eldiv){
 				if (usuario===4){
 					var carta = parseInt(objeto.target.id.substr(-1,1));
 					TiraLaCarta(usuario,carta);
-					/*
-					if (laPartida.esUltimoTurno()===false){
-						nuevaTirada();
-					}
-					*/
 				}
 			}
 		);

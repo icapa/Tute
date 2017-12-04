@@ -261,11 +261,11 @@ class Partida{
 		
 		// Si es el jugador no se hace nada
 		if (this.jugadorGanadorTurno(this.turnoActual)===3){
-			console.log("NO JUEGA LA MAQUINA");
-			return;;
+			console.log("!!!! NO JUEGA LA MAQUINA !!!!");
+			return;
 		}
 
-		console.log("Juega la máquina el usuario: " + this.turnoActual);
+		console.log("#### ---> Juega la máquina el usuario: " + this.turnoActual);
 		laTirada = this.juegaLaMaquina(this.turnoActual);
 		callback(laTirada);
 		/* Aqui anulamos la carta para que no se pueda usar */
