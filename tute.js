@@ -321,7 +321,7 @@ class Partida{
 	ordenaMano(mano){
 		var arrayOrdenado=[];
 
-		const paloPinte = laBaraja.carta(this.cartaPinte).getIndicePalo();
+		const paloPinte = this.baraja.carta(this.cartaPinte).getIndicePalo();
 		for (var i=0;i<mano.length;i++){
 			if (i==0){
 				arrayOrdenado.push(mano[0]);

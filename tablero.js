@@ -3,9 +3,13 @@ let imgCartaAlto = 320;
 let numeroJugadores=4;
 let numeroCartasJugador=10;
 
-let laBaraja = new Baraja();
-var laPartida = new Partida (numeroJugadores,numeroCartasJugador,laBaraja);
+laBaraja = new Baraja();
+laPartida = new Partida (numeroJugadores,numeroCartasJugador,laBaraja);
 
+
+laPartida.setOnManoFinalizada(acaboLaMano);
+laPartida.setOnTurnoFinalizado(nuevaTirada);
+laPartida.setOnRondaFinalizada(rondaFinalizada);
 
 
 
@@ -58,30 +62,33 @@ function rondaFinalizada(ganadorReal){
 		}
 		BorraCartasTiradas();
 	},1000);
-	setTimeout(() => {			
-		nuevaTirada();
+	
+	setTimeout(() => {
+		if(laPartida.numeroMano !== 0){
+			nuevaTirada();
+		}
 	},2000);
+	
 	
 }
 
 $(document).ready(function(){
 	CreaPartida();
+	AsignaEventosCartas('#jugador4');
 })
 
 
 
 function CreaPartida(){
+	
 	CrearDiv('#jugador1');
 	CrearDiv('#jugador2');
 	CrearDiv('#jugador3');
 	CrearDiv('#jugador4');
-	AsignaEventosCartas('#jugador4');
-	/* Callback de la partida */
-	laPartida.setOnManoFinalizada(acaboLaMano);
-	laPartida.setOnTurnoFinalizado(nuevaTirada);
-	laPartida.setOnRondaFinalizada(rondaFinalizada);
-
-	nuevaTirada();
+	
+	
+	
+	setTimeout(nuevaTirada,2000);
 
 }
 
@@ -145,7 +152,7 @@ function CrearDiv(jugador){
 				.attr('style',propiedades)		
 				.appendTo($(jugador))
 		}
-
+		
 		VisibleCartaTirada(jugNum,i);
 		
 		var carNum = laPartida.dameCarta(jugNum-1,i);
@@ -153,6 +160,7 @@ function CrearDiv(jugador){
 		if (jugNum==4){
 			AsignaCartaImagen(jugNum,i,laBaraja.carta(carNum));
 			if (laBaraja.carta(carNum).palo===laBaraja.carta(laPartida.cartaPinte).palo){
+				d=document.getElementById('jugador'+jugNum+i);
 				$(d).addClass('cartaPinte');
 			}
 		}
@@ -191,6 +199,8 @@ function OcultaCartaTirada(jugador,indiceCarta){
 function VisibleCartaTirada(jugador,indiceCarta){
 	$('#jugador'+jugador+indiceCarta)
 		.css({'display':'block'});
+	
+	document.getElementById('jugador'+jugador+indiceCarta).className='carta';
 }
 
 function AsignaCartaImagen(jugador,numero,carta){
